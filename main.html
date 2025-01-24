@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="NSDiffusion: Training-Free High-Resolution Image Generation with Noise Shuffle">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NSDiffusion: Training-Free High-Resolution Image Generation with Noise Shuffle
+  </title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+   <!-- 引入 BeerSlider.js 和相关的 CSS -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beerslider/dist/BeerSlider.css">
+   <script src="https://cdn.jsdelivr.net/npm/beerslider/dist/BeerSlider.js"></script>
+
+   <style>
+       #slider {
+           width: 100%;
+           max-width: 600px;
+           margin: 50px auto;
+       }
+   </style>
+ 
+</head>
+
+<body>
+
+<style>
+  .publication-title {
+    font-family: "textsc "
+  }
+  video {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
+  .image_wrapper {
+    position: relative;
+    width: 226px;
+    height: 226px;
+  }
+
+  .image_container {
+    border-radius: 10px; /*设置图片的圆角，可以根据你的需求调整这个值*/
+    /*margin: 10px; !* 在图片的外部元素上设置间距 *!*/
+    overflow: hidden; /* 为了保持图片的圆角效果 */
+    position: relative;
+    width: 100%;
+
+    padding-bottom: 100%;
+  }
+
+  .image_container img {
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 这会使图片保持原始比例，但仍然填充其容器 */
+    object-position: center; /* 新增加的代码，让图片居中 */
+  }
+
+  .caption {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    font-family: 'Comic Sans MS', 'Verdana', 'Tahoma', sans-serif;
+    text-align: center; /* 让文本在其容器中水平居中 */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .image_container:hover .caption {
+    opacity: 1;
+  }
+
+
+
+  .column.is-2.has-text-centered img.interpolation-image {
+
+    object-fit: cover;
+    border-radius: 10px;
+    transition: opacity 0.5s ease;
+    object-position: center; /* 新增加的代码，让图片居中 */
+  }
+
+  .column.is-2.has-text-centered:hover img.interpolation-image {
+    opacity: 0.5;
+  }
+
+  .column.is-2.has-text-centered .caption {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    font-family: 'Comic Sans MS', 'Verdana', 'Tahoma', sans-serif;
+    text-align: center; /* 让文本在其容器中水平居中 */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .column.is-2.has-text-centered:hover .caption {
+    opacity: 1;
+  }
+
+  .columns.is-centered img {
+    margin-bottom: 20px; /* 或者你想要的任何值 */
+  }
+
+
+  .section { margin: 3px; padding: 5px; }
+</style>
+
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2">NSDiffusion: Training-Free High-Resolution Image Generation with Noise Shuffle</h1>
+          
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 导航目录 -->
+<div class="content">
+    <nav class="table-of-contents" style="margin-top: 2rem;">
+      <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+        <li><a href="#baselines" style="color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;">Additional Baselines</a></li>
+        <li><a href="#artifacts" style="color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;">Architecture Artifacts</a></li>
+        <li><a href="#masks" style="color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;">Structure Guidance</a></li>
+        <li><a href="#results" style="color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;">More Results</a></li>
+      </ul>
+    </nav>
+  </div>
+
+
+<section class="section">
+  
+
+  <br>
+  <br>
+
+
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-four-fifths">
+      <h2 class="title is-3" id="baselines">Additional Baseline Comparisons</h2>
+      <img src="static_rebuttal/img/more_result.png" alt="描述图片内容" style="width:100%;">
+      <img src="static_rebuttal/img/more_baseline_visual.png" alt="描述图片内容" style="width:100%;">
+    </div> 
+    <br>
+    </div>  
+  </div>
+
+
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-four-fifths">
+      <h2 class="title is-3" id="artifacts">Artifacts in High-Resolution Generation Across Different Architectures</h2>
+      <div class="content has-text-justified">
+        <h4 class="subtitle is-5">High-Resolution Generation Artifacts in UNet-based Models (SDXL)</h4>
+        <img src="static_rebuttal/img/UNet.png" alt="SD3 Artifacts" style="width:100%;">
+        
+        <h4 class="subtitle is-5">High-Resolution Generation Artifacts in DiT-based Models (SD3)</h4>
+        <img src="static_rebuttal/img/DiT.png" alt="SD3 Artifacts" style="width:100%;">
+      </div>
+    </div>
+  </div>
+  
+  <!--/ Paper video. -->
+</div>
+
+  <!--  Editable -->
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-four-fifths">
+      <h2 class="title is-3" id="masks">Analysis of Different Mask on Structure Guidance</h2>
+      <img src="static_rebuttal/img/mask.png" alt="描述图片内容" style="width:100%;">
+      <img src="static_rebuttal/img/mask_result.png" alt="描述图片内容" style="width:100%;">
+
+
+      <br>
+    </div>
+  </div>
+
+  
+<br>
+  <br>
+
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-four-fifths">
+      <h2 class="title is-3" id="results">More Results</h2>
+      <img src="static_NS/img/comparison.png" alt="描述图片内容" style="width:100%;">
+      <img src="static_NS/img/more_result.png" alt="描述图片内容" style="width:100%;">
+      <img src="static_NS/img/teaser2.png" alt="描述图片内容" style="width:100%;">
+
+      <br>
+    </div>
+  </div>
+
+  
+
+
+  <!--left one Creative-->
+
+</section>
+<br>
+<br>
+
+
+
+<!-- <script>
+  // document.addEventListener("DOMContentLoaded", function() {
+  //     new BeerSlider(document.getElementById('slider'));
+  // });
+  document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+        new BeerSlider(document.getElementById('slider'));
+    }, 100); // 延迟初始化以确保DOM完全加载
+}); 
+
+</script> -->
+
+<script>
+  
+  document.addEventListener("DOMContentLoaded", function() {
+      new BeerSlider(document.getElementById('slider1'));
+      new BeerSlider(document.getElementById('slider2'));
+      new BeerSlider(document.getElementById('slider3'));
+      new BeerSlider(document.getElementById('slider4'));
+  });
+</script>
+
+</body>
+</html>

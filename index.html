@@ -183,27 +183,36 @@
 
 
 <section class="section">
-  
-
-  <br>
-  <br>
-
+  <div class="container is-max-desktop">
+    <!-- 添加总体介绍 -->
+    <div class="content has-text-justified">
+      <p>
+        We thank all reviewers for their constructive feedback and positive remarks, including the novelty of our method, convincing ablation studies, state-of-the-art performance, and the clarity of our writing.
+      </p>
+    </div>
+  </div>
 
   <div class="columns is-centered has-text-centered">
     <div class="column is-four-fifths">
       <h2 class="title is-3" id="baselines">Additional Baseline Comparisons</h2>
-      <img src="static_rebuttal/img/more_result.png" alt="描述图片内容" style="width:100%;">
-      <img src="static_rebuttal/img/more_baseline_visual.png" alt="描述图片内容" style="width:100%;">
-    </div> 
-    <br>
-    </div>  
+      <!-- 添加基线比较说明 -->
+      <div class="content has-text-justified">
+        <p>
+          We have included additional baselines for comprehensive comparison. For methods with publicly available implementations, we provide both quantitative and qualitative comparisons to demonstrate how our approach performs against these baselines. Unfortunately, some methods like "ResMaster" could not be directly compared due to unavailable code, but we include detailed discussions of their methodologies.
+        </p>
+      </div>
+      <img src="static_rebuttal/img/more_result.png" alt="Additional baseline results" style="width:100%;">
+      <img src="static_rebuttal/img/more_baseline_visual.png" alt="Visual comparison with baselines" style="width:100%;">
+    </div>
   </div>
-
 
   <div class="columns is-centered has-text-centered">
     <div class="column is-four-fifths">
       <h2 class="title is-3" id="artifacts">Artifacts in High-Resolution Generation Across Different Architectures</h2>
       <div class="content has-text-justified">
+        <p>
+          Our method operates at the latent level, making it compatible with various diffusion architectures like SD3, SDXL, and SD1.5. As demonstrated below, our approach effectively mitigates pattern repetition in both UNet-based and DiT-based architectures through structure guidance and cross-attention masks.
+        </p>
         <h4 class="subtitle is-5">High-Resolution Generation Artifacts in UNet-based Models (SDXL)</h4>
         <img src="static_rebuttal/img/UNet.png" alt="SD3 Artifacts" style="width:100%;">
         
@@ -220,8 +229,14 @@
   <div class="columns is-centered has-text-centered">
     <div class="column is-four-fifths">
       <h2 class="title is-3" id="masks">Analysis of Different Mask on Structure Guidance</h2>
-      <img src="static_rebuttal/img/mask.png" alt="描述图片内容" style="width:100%;">
-      <img src="static_rebuttal/img/mask_result.png" alt="描述图片内容" style="width:100%;">
+      <!-- 添加结构引导说明 -->
+      <div class="content has-text-justified">
+        <p>
+          The Cross-Attention Mask is derived by normalizing the cross-attention map, assigning higher weights to regions with stronger attention. White areas in the visualization indicate stronger guidance. The mask computation occurs at every denoising step to ensure consistent structural guidance throughout the generation process.
+        </p>
+      </div>
+      <img src="static_rebuttal/img/mask.png" alt="Mask analysis" style="width:100%;">
+      <img src="static_rebuttal/img/mask_result.png" alt="Mask results" style="width:100%;">
 
 
       <br>
@@ -235,9 +250,15 @@
   <div class="columns is-centered has-text-centered">
     <div class="column is-four-fifths">
       <h2 class="title is-3" id="results">More Results</h2>
-      <img src="static_NS/img/comparison.png" alt="描述图片内容" style="width:100%;">
-      <img src="static_NS/img/more_result.png" alt="描述图片内容" style="width:100%;">
-      <img src="static_NS/img/teaser2.png" alt="描述图片内容" style="width:100%;">
+      <!-- 添加结果说明 -->
+      <div class="content has-text-justified">
+        <p>
+          Due to previous submission constraints, some high-resolution details were not fully visible. Here we present additional examples showcasing our method's ability to preserve textures and reduce pattern repetition. These results demonstrate the effectiveness of our approach in maintaining both global semantic consistency and local detail preservation.
+        </p>
+      </div>
+      <img src="static_NS/img/comparison.png" alt="Comparison results" style="width:100%;">
+      <img src="static_NS/img/more_result.png" alt="Additional results" style="width:100%;">
+      <img src="static_NS/img/teaser2.png" alt="Teaser results" style="width:100%;">
 
       <br>
     </div>

@@ -1,299 +1,134 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description"
-        content="NSDiffusion: Training-Free High-Resolution Image Generation with Noise Shuffle">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NSDiffusion: Training-Free High-Resolution Image Generation with Noise Shuffle
-  </title>
+  <meta name="description" content="ASGDiffusion: Parallel High-Resolution Generation with Asynchronous Structure Guidance">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>ASGDiffusion: Parallel High-Resolution Generation with Asynchronous Structure Guidance</title>
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-PYVRSFMDRL');
-  </script>
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-
+  <!-- Stylesheets -->
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans" rel="stylesheet">
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beerslider/dist/BeerSlider.css">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
-
-   <!-- 引入 BeerSlider.js 和相关的 CSS -->
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beerslider/dist/BeerSlider.css">
-   <script src="https://cdn.jsdelivr.net/npm/beerslider/dist/BeerSlider.js"></script>
-
-   <style>
-       #slider {
-           width: 100%;
-           max-width: 600px;
-           margin: 50px auto;
-       }
-   </style>
- 
+  <style>
+    body { font-family: "Noto Sans", sans-serif; }
+    .section { margin: 3px; padding: 15px; }
+    .table-of-contents {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .table-of-contents ul {
+      list-style: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
+    }
+    .table-of-contents a {
+      color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;
+    }
+    .reviewer-label {
+      font-size: 0.9rem; color: red; font-weight: bold; margin-left: 5px;
+    }
+    hr { border: 1px solid #ddd; margin: 20px 0; }
+    .content { text-align: left; }
+  </style>
 </head>
 
 <body>
 
-<style>
-  .publication-title {
-    font-family: "textsc "
-  }
-  video {
-    outline: none;
-    border: none;
-    box-shadow: none;
-  }
-  .image_wrapper {
-    position: relative;
-    width: 226px;
-    height: 226px;
-  }
-
-  .image_container {
-    border-radius: 10px; /*设置图片的圆角，可以根据你的需求调整这个值*/
-    /*margin: 10px; !* 在图片的外部元素上设置间距 *!*/
-    overflow: hidden; /* 为了保持图片的圆角效果 */
-    position: relative;
-    width: 100%;
-
-    padding-bottom: 100%;
-  }
-
-  .image_container img {
-
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 这会使图片保持原始比例，但仍然填充其容器 */
-    object-position: center; /* 新增加的代码，让图片居中 */
-  }
-
-  .caption {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    display: flex;
-    align-items: center; /* 垂直居中 */
-    justify-content: center; /* 水平居中 */
-    font-family: 'Comic Sans MS', 'Verdana', 'Tahoma', sans-serif;
-    text-align: center; /* 让文本在其容器中水平居中 */
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-
-  .image_container:hover .caption {
-    opacity: 1;
-  }
-
-
-
-  .column.is-2.has-text-centered img.interpolation-image {
-
-    object-fit: cover;
-    border-radius: 10px;
-    transition: opacity 0.5s ease;
-    object-position: center; /* 新增加的代码，让图片居中 */
-  }
-
-  .column.is-2.has-text-centered:hover img.interpolation-image {
-    opacity: 0.5;
-  }
-
-  .column.is-2.has-text-centered .caption {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    display: flex;
-    align-items: center; /* 垂直居中 */
-    justify-content: center; /* 水平居中 */
-    font-family: 'Comic Sans MS', 'Verdana', 'Tahoma', sans-serif;
-    text-align: center; /* 让文本在其容器中水平居中 */
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-
-  .column.is-2.has-text-centered:hover .caption {
-    opacity: 1;
-  }
-
-  .columns.is-centered img {
-    margin-bottom: 20px; /* 或者你想要的任何值 */
-  }
-
-
-  .section { margin: 3px; padding: 5px; }
-</style>
-
-
-
 <section class="hero">
   <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-2">NSDiffusion: Training-Free High-Resolution Image Generation with Noise Shuffle</h1>
-          
-          
-        </div>
-      </div>
+    <div class="container is-max-desktop has-text-centered">
+      <h1 class="title is-2">ASGDiffusion: Parallel High-Resolution Generation with Asynchronous Structure Guidance</h1>
     </div>
   </div>
 </section>
 
 <!-- 导航目录 -->
-<div class="content">
-    <nav class="table-of-contents" style="margin-top: 2rem;">
-      <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-        <li><a href="#baselines" style="color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;">Additional Baselines</a></li>
-        <li><a href="#artifacts" style="color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;">Architecture Artifacts</a></li>
-        <li><a href="#masks" style="color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;">Structure Guidance</a></li>
-        <li><a href="#results" style="color: #363636; text-decoration: none; font-weight: 500; font-size: 1.1rem;">More Results</a></li>
-      </ul>
-    </nav>
-  </div>
+<nav class="table-of-contents">
+  <ul>
+    <li><a href="#baselines">Additional Baselines</a> <span class="reviewer-label">(Reviewer 1 & 2)</span></li>
+    <li><a href="#artifacts">Architecture Artifacts</a> <span class="reviewer-label">(Reviewer 2)</span></li>
+    <li><a href="#highres">Higher Resolution Comparison</a> <span class="reviewer-label">(Reviewer 2)</span></li>
+    <li><a href="#masks">Inference Speed</a> <span class="reviewer-label">(Reviewer 3)</span></li>
+    <li><a href="#results">More Results</a> <span class="reviewer-label">(Reviewer 1)</span></li>
+  </ul>
+</nav>
 
+<hr>
 
 <section class="section">
   <div class="container is-max-desktop">
-    <!-- 添加总体介绍 -->
-    <div class="content has-text-justified">
-      <p>
-        We thank all reviewers for their constructive feedback and positive remarks, including the novelty of our method, convincing ablation studies, state-of-the-art performance, and the clarity of our writing.
-      </p>
+    <div class="content">
+      <p>We thank all reviewers for their constructive feedback and positive remarks, including the novelty of our method, convincing ablation studies, state-of-the-art performance, and the clarity of our writing.</p>
     </div>
   </div>
 
-  <div class="columns is-centered has-text-centered">
+  <hr>
+
+  <!-- Baseline Comparisons -->
+  <div class="columns is-centered">
     <div class="column is-four-fifths">
       <h2 class="title is-3" id="baselines">Additional Baseline Comparisons</h2>
-      <!-- 添加基线比较说明 -->
-      <div class="content has-text-justified">
-        <p>
-          We have included additional baselines for comprehensive comparison. For methods with publicly available implementations, we provide both quantitative and qualitative comparisons to demonstrate how our approach performs against these baselines. Unfortunately, some methods like "ResMaster" could not be directly compared due to unavailable code, but we include detailed discussions of their methodologies.
-        </p>
-      </div>
-      <img src="static_rebuttal/img/more_result.png" alt="Additional baseline results" style="width:100%;">
-      <img src="static_rebuttal/img/more_baseline_visual.png" alt="Visual comparison with baselines" style="width:100%;">
+      <p><strong>Reviewer 1 & 2:</strong> We appreciate the suggestion to include "ResMaster" for comparison. Since its code is not publicly available, direct experiments are not possible. However, we will discuss its contributions in the revised manuscript. Additionally, comparisons with three other baselines are provided in the anonymous link.</p>
+      <img src="static_rebuttal/img/more_result.png" alt="Baseline results" style="width:100%;">
+      <img src="static_rebuttal/img/more_baseline_visual.png" alt="Visual comparison" style="width:100%;">
     </div>
   </div>
 
-  <div class="columns is-centered has-text-centered">
+  <hr>
+
+  <!-- Artifacts -->
+  <div class="columns is-centered">
     <div class="column is-four-fifths">
-      <h2 class="title is-3" id="artifacts">Artifacts in High-Resolution Generation Across Different Architectures</h2>
-      <div class="content has-text-justified">
-        <p>
-          Our method operates at the latent level, making it compatible with various diffusion architectures like SD3, SDXL, and SD1.5. As demonstrated below, our approach effectively mitigates pattern repetition in both UNet-based and DiT-based architectures through structure guidance and cross-attention masks.
-        </p>
-        <h4 class="subtitle is-5">High-Resolution Generation Artifacts in UNet-based Models (SDXL)</h4>
-        <img src="static_rebuttal/img/UNet.png" alt="SD3 Artifacts" style="width:100%;">
-        
-        <h4 class="subtitle is-5">High-Resolution Generation Artifacts in DiT-based Models (SD3)</h4>
-        <img src="static_rebuttal/img/DiT.png" alt="SD3 Artifacts" style="width:100%;">
-      </div>
+      <h2 class="title is-3" id="artifacts">High-Resolution Artifacts Across Architectures</h2>
+      <p><strong>Reviewer 2:</strong> Our method operates at the latent level, making it compatible with various diffusion architectures like UNet and DiT. We demonstrate high-resolution generation results for both UNet-based and DiT-based architectures, showing ASGDiffusion effectively mitigates pattern repetition and maintains global semantic consistency.</p>
+      <img src="static_rebuttal/img/UNet.png" alt="UNet artifacts" style="width:100%;">
+      <img src="static_rebuttal/img/DiT.png" alt="DiT artifacts" style="width:100%;">
     </div>
   </div>
-  
-  <!--/ Paper video. -->
-</div>
 
-  <!--  Editable -->
-  <div class="columns is-centered has-text-centered">
+  <hr>
+
+  <!-- Higher Resolution Comparison -->
+  <div class="columns is-centered">
     <div class="column is-four-fifths">
-      <h2 class="title is-3" id="masks">Analysis of Different Mask on Structure Guidance</h2>
-      <!-- 添加结构引导说明 -->
-      <div class="content has-text-justified">
-        <p>
-          The Cross-Attention Mask is derived by normalizing the cross-attention map, assigning higher weights to regions with stronger attention. White areas in the visualization indicate stronger guidance. The mask computation occurs at every denoising step to ensure consistent structural guidance throughout the generation process.
-        </p>
-      </div>
+      <h2 class="title is-3" id="highres">Higher Resolution Comparison (4096×4096)</h2>
+      <p><strong>Reviewer 2:</strong> ASGDiffusion synthesizes high-resolution images by stitching together patches from the Latent Diffusion Model (LDM). As resolution increases, more patches are required, leading to weaker pixel interaction. To address this, a progressive upsampling strategy could be used. We provide higher-resolution visualizations in the anonymous link.</p>
+      <img src="static_rebuttal/img/result4096.png" alt="Higher Resolution Comparison" style="width:100%;">
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Structure Guidance -->
+  <div class="columns is-centered">
+    <div class="column is-four-fifths">
+      <h2 class="title is-3" id="masks">Inference Speed</h2>
+      <p><strong>Reviewer 3:</strong> Thank you for your feedback. While our method has slightly longer inference time on a single GPU compared to CutDiffusion, it effectively mitigates pattern repetition. Additionally, our multi-GPU parallelism significantly accelerates inference, making it highly scalable.</p>
+      <p>The increased single-GPU inference time mainly stems from computing the Cross-Attention Mask at every denoising step. To address this, we propose a novel solution: adopting Classifier-Free Guidance (CFG) as Mask. Our recent research shows that CFG can replace the Cross-Attention Mask while maintaining strong performance with negligible computational cost.</p>
       <img src="static_rebuttal/img/mask.png" alt="Mask analysis" style="width:100%;">
       <img src="static_rebuttal/img/mask_result.png" alt="Mask results" style="width:100%;">
-
-
-      <br>
     </div>
   </div>
 
-  
-<br>
-  <br>
+  <hr>
 
-  <div class="columns is-centered has-text-centered">
+  <!-- More Results -->
+  <div class="columns is-centered">
     <div class="column is-four-fifths">
       <h2 class="title is-3" id="results">More Results</h2>
-      <!-- 添加结果说明 -->
-      <div class="content has-text-justified">
-        <p>
-          Due to previous submission constraints, some high-resolution details were not fully visible. Here we present additional examples showcasing our method's ability to preserve textures and reduce pattern repetition. These results demonstrate the effectiveness of our approach in maintaining both global semantic consistency and local detail preservation.
-        </p>
-      </div>
+      <p><strong>Reviewer 1:</strong> Due to submission constraints, some high-resolution details were not fully visible. Here we present additional examples showcasing our method's ability to preserve textures and reduce pattern repetition. These results demonstrate the effectiveness of our approach in maintaining both global semantic consistency and local detail preservation.</p>
       <img src="static_NS/img/comparison.png" alt="Comparison results" style="width:100%;">
       <img src="static_NS/img/more_result.png" alt="Additional results" style="width:100%;">
-      <img src="static_NS/img/teaser2.png" alt="Teaser results" style="width:100%;">
-
-      <br>
     </div>
   </div>
-
-  
-
-
-  <!--left one Creative-->
-
 </section>
-<br>
-<br>
 
-
-
-<!-- <script>
-  // document.addEventListener("DOMContentLoaded", function() {
-  //     new BeerSlider(document.getElementById('slider'));
-  // });
-  document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-        new BeerSlider(document.getElementById('slider'));
-    }, 100); // 延迟初始化以确保DOM完全加载
-}); 
-
-</script> -->
+<hr>
 
 <script>
-  
   document.addEventListener("DOMContentLoaded", function() {
-      new BeerSlider(document.getElementById('slider1'));
-      new BeerSlider(document.getElementById('slider2'));
-      new BeerSlider(document.getElementById('slider3'));
-      new BeerSlider(document.getElementById('slider4'));
+    ['slider1', 'slider2', 'slider3', 'slider4'].forEach(id => new BeerSlider(document.getElementById(id)));
   });
 </script>
 
